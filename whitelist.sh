@@ -92,15 +92,15 @@ fi
 if [[ $remove == 'y' ]]; then
 	echo "Removing WHITELIST chain from iptables."
 	# remove reference to the chain from prerouting
-	index=$(iptables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}' || true)
-	[[ -n "$index" ]] && iptables -t mangle -D PREROUTING $index || echo "Could not find any references in -t mangle of PREROUTING."
-	iptables -t mangle -F WHITELIST || true
-	iptables -t mangle -X WHITELIST || true
+	index=$(/sbin/iptables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}' || true)
+	[[ -n "$index" ]] && /sbin/iptables -t mangle -D PREROUTING $index || echo "Could not find any references in -t mangle of PREROUTING."
+	/sbin/iptables -t mangle -F WHITELIST || true
+	/sbin/iptables -t mangle -X WHITELIST || true
 	# do the same for ip6tables
-	index=$(ip6tables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}' || true)
-	[[ -n "$index" ]] && ip6tables -t mangle -D PREROUTING $index || echo "Could not find any references in -t mangle of PREROUTING."
-	ip6tables -t mangle -F WHITELIST || true
-	ip6tables -t mangle -X WHITELIST || true
+	index=$(/sbin/ip6tables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}' || true)
+	[[ -n "$index" ]] && /sbin/ip6tables -t mangle -D PREROUTING $index || echo "Could not find any references in -t mangle of PREROUTING."
+	/sbin/ip6tables -t mangle -F WHITELIST || true
+	/sbin/ip6tables -t mangle -X WHITELIST || true
 	echo "Successfully removed!"
 fi
 
@@ -108,8 +108,8 @@ fi
 [[ ! -e $listFile ]] && echo "Error: $listFile not found!" && exit 1
 
 echo -e "\nCreating a new chain WHITELIST."
-iptables -t mangle -N WHITELIST || exit 1
-ip6tables -t mangle -N WHITELIST || exit 1
+/sbin/iptables -t mangle -N WHITELIST || exit 1
+/sbin/ip6tables -t mangle -N WHITELIST || exit 1
 
 # add the ip ranges
 while IFS= read -r address
@@ -117,27 +117,24 @@ do
 	# check type of address
 	if [[ $address =~ .*:.* ]]; then
 		echo "Adding IPv6: $address"
-		ip6tables -t mangle -A WHITELIST -s $address -j ACCEPT
+		/sbin/ip6tables -t mangle -A WHITELIST -s $address -j ACCEPT
 	else
 		echo "Adding IPv4: $address"
-		iptables -t mangle -A WHITELIST -s $address -j ACCEPT
+		/sbin/iptables -t mangle -A WHITELIST -s $address -j ACCEPT
 	fi
 done < "$listFile"
-iptables -t mangle -A WHITELIST -j DROP
-ip6tables -t mangle -A WHITELIST -j DROP
+/sbin/iptables -t mangle -A WHITELIST -j DROP
+/sbin/ip6tables -t mangle -A WHITELIST -j DROP
 
 
 echo -e "\nCreating a reference to WHITELIST in mangle table of PREROUTING."
 
 if [[ -z $ports ]]; then
-	iptables -t mangle -I PREROUTING -j WHITELIST
-	ip6tables -t mangle -I PREROUTING -j WHITELIST
+	/sbin/iptables -t mangle -I PREROUTING -j WHITELIST
+	/sbin/ip6tables -t mangle -I PREROUTING -j WHITELIST
 else
-	iptables -t mangle -I PREROUTING -p tcp -m multiport --dports $ports -j WHITELIST
-	ip6tables -t mangle -I PREROUTING -p tcp -m multiport --dports $ports -j WHITELIST
+	/sbin/iptables -t mangle -I PREROUTING -p tcp -m multiport --dports $ports -j WHITELIST
+	/sbin/ip6tables -t mangle -I PREROUTING -p tcp -m multiport --dports $ports -j WHITELIST
 fi
 
 echo "Finished! Check your new iptables rules with iptables -t mangle -L. Run the script with -r/--remove to undo all changes."
-
-
-# --help
