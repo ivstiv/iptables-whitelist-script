@@ -16,8 +16,8 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
     exit 1
 fi
 
-OPTIONS=l:p:r
-LONGOPTS=list:,ports:,remove
+OPTIONS=l:p:ruh
+LONGOPTS=list:,ports:,remove,update,help
 
 # regarding ! and PIPESTATUS see above
 # temporarily store output to be able to check for errors
@@ -32,7 +32,7 @@ fi
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-remove=n listFile='' ports=''
+remove=n listFile='' ports='' update=n help=n
 while true; do
     case "$1" in
         -r|--remove)
@@ -47,6 +47,14 @@ while true; do
             ports="$2"
             shift 2
             ;;
+		-h|--help)
+			help=y
+			shift
+			;;
+		-u|--update)
+			shift
+			update=y
+			;;
         --)
             shift
             break
@@ -57,6 +65,29 @@ while true; do
             ;;
     esac
 done
+
+if [[ $help == 'y' ]]; then
+	cat << EOM
+Usage: bash whitelist.sh [options]
+	
+Options:
+  -r,--remove | Removes the whitelist.
+  -u,--update | Updates the ip lists files.
+  -p,--ports <port1,port2> | Specifies ports delimited by comma, the whitelist to be applied to.
+  -l,--list <path> | Specifies a custom ip list file.
+EOM
+	exit 0
+fi
+
+if [[ $update == 'y' ]]; then
+	echo -e "Updating ip lists..."
+	currentDir=$(pwd)
+	rm $currentDir/stackpath.list $currentDir/cloudflare.list || ! echo "You need to execute the script from its own directory to update them!" || exit 1
+	wget -qO - https://support.stackpath.com/hc/en-us/article_attachments/360041383752/ipblocks.txt > $currentDir/stackpath.list
+	echo "$currentDir/stackpath.list was updated."
+	wget -qO - https://www.cloudflare.com/{ips-v4,ips-v6} > $currentDir/cloudflare.list
+	echo "$currentDir/cloudflare.list was updated."
+fi
 
 if [[ $remove == 'y' ]]; then
 	echo "Removing WHITELIST chain from iptables."
@@ -70,6 +101,7 @@ if [[ $remove == 'y' ]]; then
 	[[ -n "$index" ]] && ip6tables -t mangle -D PREROUTING $index || echo "Could not find any references in -t mangle of PREROUTING."
 	ip6tables -t mangle -F WHITELIST || true
 	ip6tables -t mangle -X WHITELIST || true
+	echo "Successfully removed!"
 fi
 
 [[ -z $listFile ]] && exit 0
@@ -79,8 +111,10 @@ echo -e "\nCreating a new chain WHITELIST."
 iptables -t mangle -N WHITELIST || exit 1
 ip6tables -t mangle -N WHITELIST || exit 1
 
+# add the ip ranges
 while IFS= read -r address
 do
+	# check type of address
 	if [[ $address =~ .*:.* ]]; then
 		echo "Adding IPv6: $address"
 		ip6tables -t mangle -A WHITELIST -s $address -j ACCEPT
@@ -105,12 +139,5 @@ fi
 
 echo "Finished! Check your new iptables rules with iptables -t mangle -L. Run the script with -r/--remove to undo all changes."
 
-#iptables -t mangle -N WHITELIST
-#iptables -t mangle -A WHITELIST -s 3.3.3.3 -j DROP
-#iptables -t mangle -A PREROUTING -p tcp -m multiport --dports 80,443 -j WHITELIST
-#iptables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}'
 
-#ip6tables -t mangle -N WHITELIST
-#ip6tables -t mangle -A WHITELIST -s  2001:db8:1f0a:3ec::2/128 -j DROP
-#ip6tables -t mangle -A PREROUTING -p tcp -m multiport --dports 80,443 -j WHITELIST
-#ip6tables -t mangle -L PREROUTING --line-numbers | grep WHITELIST | awk '{print $1}'
+# --help
