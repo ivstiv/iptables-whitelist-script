@@ -16,8 +16,8 @@ A small bash script that can automatically setup a custom [iptables](https://en.
     Usage: bash whitelist.sh [options]
     
     Options:
-        -r,--remove | Removes the whitelist.
-		-u,--update | Updates the ip lists files.
+	    -r,--remove | Removes the whitelist.
+	    -u,--update | Updates the ip lists files.
 	    -p,--ports <port1,port2> | Specifies ports delimited by comma, the whitelist to be applied to.
 	    -l,--list <path> | Specifies a custom ip list file.
 
@@ -38,16 +38,6 @@ You can even update, remove old and set new rules at once!
 ## Installation
 Just clone this repository and run the script as shown...
 
-## Setup a token for auto-version checking and database downloads
-1. Make a free IP2Location account [here](https://lite.ip2location.com/sign-up) or [become their customer](https://www.ip2location.com/?rid=1522).
-2. If you are using the lite(free) version you can find your download token [here](https://lite.ip2location.com/file-download).
-3. Copy the **Download Token** to the **token field** in config.ini
-4. Test it by forcing an update with --update-database
-
-***Since I don't have the paid version I can't give you detailed instructions on how to do it but the process should be somewhat similar.***
-
-
-
 ## IPtables configuration and advice
 **Please note that if you don't specify ports for the whitelist to be applied to it will be applied to all which would effectively block you from connecting remotely via ssh or ftp!**
 
@@ -60,4 +50,3 @@ For any additional help consult the documentation of your firewall or check a tu
 # Links and additional info
 
 I don't see how this can be further developed but if you have any ideas you are welcome to [join my discord](https://discord.gg/VMSDGVD) and ask for help or give me a heads up for problems with the script. This was developed entirely for personal use but I figured other people might find it useful as well so any feedback is appreciated!
-
