@@ -47,14 +47,14 @@ while true; do
             ports="$2"
             shift 2
             ;;
-		-h|--help)
-			help=y
-			shift
-			;;
-		-u|--update)
-			shift
-			update=y
-			;;
+        -h|--help)
+            help=y
+            shift
+            ;;
+        -u|--update)
+            shift
+            update=y
+            ;;
         --)
             shift
             break
