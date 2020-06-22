@@ -8,7 +8,7 @@ A small bash script that can automatically setup a custom [iptables](https://en.
  - Automatic creation and removal of iptables rules 
  - Self-updating argument for keeping ip ranges up to date for [Cloudflare](https://www.cloudflare.com/ips/) and [Stackpath](https://support.stackpath.com/hc/en-us/articles/360001091666)
  - Works with custom files containing line separated ip ranges in CIDR notation
- - Can be used only on specific ports
+ - Can be used with specific ports
 
 ## Commands and parameters
 
@@ -23,17 +23,18 @@ A small bash script that can automatically setup a custom [iptables](https://en.
 
 A general example:
 
-    bash whitelist.sh --list cloudflare.list --ports 80,443 
+    sh whitelist.sh --list cloudflare.list --ports 80,443 
 You can even update, remove old and set new rules at once!
 
-    bash whitelist.sh -u -r -l cloudflare.list -p 80,443
+    sh whitelist.sh -u -r -l cloudflare.list -p 80,443
 
 ## Requirements and dependencies
 
  - A system running GNU/Linux
  - iptables
- - bash
- - wget (for updating the lists)
+- curl
+- grep
+- cut
 
 ## Installation
 Just clone this repository and run the script as shown...
@@ -43,7 +44,7 @@ Just clone this repository and run the script as shown...
 
 It might be a good idea to setup a crontab job that updates daily the ipranges in case they change. Here is an example of how you can do that. Just substitute **\<DIR>** with the full path to the directory of the script. **This needs to run with root privileges because of iptables!**
 
-    0  0  *  *  * cd <DIR> && bash whitelist.sh -u -r -l cloudflare.list -p 80
+    0  0  *  *  * cd <DIR> && sh whitelist.sh -u -r -l cloudflare.list -p 80
 
 For any additional help consult the documentation of your firewall or check a tutorial on how iptables works. I recommend checking [this one](https://www.booleanworld.com/depth-guide-iptables-linux-firewall/) out. 
 
