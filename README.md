@@ -13,7 +13,7 @@ A small bash script that can automatically setup a custom [iptables](https://en.
 ## Commands and parameters
 
     
-    Usage: bash whitelist.sh [options]
+    Usage: sh whitelist.sh [options]
     
     Options:
 	    -r,--remove | Removes the whitelist.

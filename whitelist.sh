@@ -57,7 +57,7 @@ done
 
 if [ $help = 'y' ]; then
 	cat << EOM
-Usage: bash whitelist.sh [options]
+Usage: sh whitelist.sh [options]
 	
 Options:
   -r,--remove | Removes the whitelist.
