@@ -76,7 +76,7 @@ if [ $update = 'y' ]; then
         echo "You need to execute the script from its own directory to update them!" >&2
         exit 1
     fi
-	curl -s "https://support.stackpath.com/hc/en-us/article_attachments/360041383752/ipblocks.txt" > "$currentDir/stackpath.list"
+	curl -s "https://support.stackpath.com/hc/en-us/article_attachments/360083735711/ipblocks.txt" > "$currentDir/stackpath.list"
 	echo "$currentDir/stackpath.list was updated."
 	curl -s "https://www.cloudflare.com/{ips-v4,ips-v6}" > "$currentDir/cloudflare.list"
 	echo "$currentDir/cloudflare.list was updated."

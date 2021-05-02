@@ -6,7 +6,7 @@ A small bash script that can automatically setup a custom [iptables](https://en.
 # Features
 
  - Automatic creation and removal of iptables rules 
- - Self-updating argument for keeping ip ranges up to date for [Cloudflare](https://www.cloudflare.com/ips/) and [Stackpath](https://support.stackpath.com/hc/en-us/articles/360001091666)
+ - Self-updating argument for keeping ip ranges up to date for [Cloudflare](https://www.cloudflare.com/ips/) and [Stackpath](https://support.stackpath.com/hc/en-us/article_attachments/360083735711/ipblocks.txt)
  - Works with custom files containing line separated ip ranges in CIDR notation
  - Can be used with specific ports
 
